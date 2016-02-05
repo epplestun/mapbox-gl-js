@@ -883,7 +883,7 @@ test('Style#featuresAt - race condition', function(t) {
         style._cascade([]);
         style._recalculate(0);
 
-        style.sources.mapbox.featuresAt = function(position, params, callback) {
+        style.sources.mapbox.featuresAt = function(position, params, classes, zoom, bearing, callback) {
             var features = [{
                 type: 'Feature',
                 layer: 'land',
@@ -896,7 +896,7 @@ test('Style#featuresAt - race condition', function(t) {
         };
 
         t.test('featuresAt race condition', function(t) {
-            style.featuresAt([256, 256], {}, function(err, results) {
+            style.featuresAt([256, 256], {}, {}, 0, 0, function(err, results) {
                 t.error(err);
                 t.equal(results.length, 0);
                 t.end();
@@ -942,7 +942,7 @@ test('Style#featuresAt', function(t) {
         style._cascade([]);
         style._recalculate(0);
 
-        style.sources.mapbox.featuresAt = style.sources.mapbox.featuresIn = function(position, params, callback) {
+        style.sources.mapbox.featuresAt = style.sources.mapbox.featuresIn = function(position, params, classes, zoom, bearing, callback) {
             var features = [{
                 type: 'Feature',
                 layer: 'land',
@@ -979,7 +979,7 @@ test('Style#featuresAt', function(t) {
             style.featuresIn.bind(style, [256, 256, 512, 512])
         ].forEach(function (featuresInOrAt) {
             t.test('returns feature type', function(t) {
-                featuresInOrAt({}, function(err, results) {
+                featuresInOrAt({}, {}, 0, 0, function(err, results) {
                     t.error(err);
                     t.equal(results[0].geometry.type, 'Polygon');
                     t.end();
@@ -987,7 +987,7 @@ test('Style#featuresAt', function(t) {
             });
 
             t.test('filters by `layer` option', function(t) {
-                featuresInOrAt({layer: 'land'}, function(err, results) {
+                featuresInOrAt({layer: 'land'}, {}, 0, 0, function(err, results) {
                     t.error(err);
                     t.equal(results.length, 2);
                     t.end();
@@ -995,7 +995,7 @@ test('Style#featuresAt', function(t) {
             });
 
             t.test('includes layout properties', function(t) {
-                featuresInOrAt({}, function(err, results) {
+                featuresInOrAt({}, {}, 0, 0, function(err, results) {
                     t.error(err);
                     var layout = results[0].layer.layout;
                     t.deepEqual(layout['line-cap'], 'round');
@@ -1004,7 +1004,7 @@ test('Style#featuresAt', function(t) {
             });
 
             t.test('includes paint properties', function(t) {
-                featuresInOrAt({}, function(err, results) {
+                featuresInOrAt({}, {}, 0, 0, function(err, results) {
                     t.error(err);
                     t.deepEqual(results[0].layer.paint['line-color'], 'red');
                     t.end();
@@ -1012,7 +1012,7 @@ test('Style#featuresAt', function(t) {
             });
 
             t.test('ref layer inherits properties', function(t) {
-                featuresInOrAt({}, function(err, results) {
+                featuresInOrAt({}, {}, 0, 0, function(err, results) {
                     t.error(err);
 
                     var layer = results[1].layer;
@@ -1027,7 +1027,7 @@ test('Style#featuresAt', function(t) {
             });
 
             t.test('includes metadata', function(t) {
-                featuresInOrAt({}, function(err, results) {
+                featuresInOrAt({}, {}, 0, 0, function(err, results) {
                     t.error(err);
 
                     var layer = results[0].layer;
@@ -1038,7 +1038,7 @@ test('Style#featuresAt', function(t) {
             });
 
             t.test('include multiple layers', function(t) {
-                featuresInOrAt({layer: ['land', 'landref']}, function(err, results) {
+                featuresInOrAt({layer: ['land', 'landref']}, {}, 0, 0, function(err, results) {
                     t.error(err);
                     t.equals(results.length, 3);
                     t.end();
