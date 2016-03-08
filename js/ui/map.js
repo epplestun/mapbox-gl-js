@@ -347,7 +347,7 @@ util.extend(Map.prototype, /** @lends Map.prototype */{
      *   console.log(features);
      * });
      */
-    queryRenderedFeatures: function(pointOrBox, params, callback) {
+    queryRenderedFeaturesAsync: function(pointOrBox, params, callback) {
         if (!(pointOrBox instanceof Point || Array.isArray(pointOrBox))) {
             callback = params;
             params = pointOrBox;
@@ -358,7 +358,7 @@ util.extend(Map.prototype, /** @lends Map.prototype */{
         return this;
     },
 
-    queryRenderedFeaturesSync: function(pointOrBox, params) {
+    queryRenderedFeatures: function(pointOrBox, params) {
         if (!(pointOrBox instanceof Point || Array.isArray(pointOrBox))) {
             params = pointOrBox;
             pointOrBox = undefined;
